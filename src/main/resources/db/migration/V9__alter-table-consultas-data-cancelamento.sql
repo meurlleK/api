@@ -1,0 +1,1 @@
+alter table consultas add column data_cancelamento datetime;

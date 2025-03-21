@@ -13,20 +13,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.medico.AtualizarDadosMedico;
-import med.voll.api.medico.DadosMedico;
-import med.voll.api.medico.DetalhamentoListaMedico;
-import med.voll.api.medico.ListaMedico;
-import med.voll.api.medico.Medico;
-import med.voll.api.medico.MedicoRepository;
+import med.voll.api.domain.medico.AtualizarDadosMedico;
+import med.voll.api.domain.medico.DadosMedico;
+import med.voll.api.domain.medico.DetalhamentoListaMedico;
+import med.voll.api.domain.medico.ListaMedico;
+import med.voll.api.domain.medico.Medico;
+import med.voll.api.domain.medico.MedicoRepository;
 
 @RestController
 @RequestMapping("medicos")
+@SecurityRequirement(name = "bearer-key")
 public class MedicoController {
 	
 	@Autowired
@@ -64,9 +65,17 @@ public class MedicoController {
 	@Transactional
 	public ResponseEntity excluirMedico(@PathVariable Long id) {
 		var medico  = repository.getReferenceById(id);
-		medico.desativarMedico();
-		
+				
 		return ResponseEntity.noContent().build();
+		
+	}
+	
+	@GetMapping("/{id}")
+	@Transactional
+	public ResponseEntity detalharMedico(@PathVariable Long id) {
+		var medico  = repository.getReferenceById(id);
+				
+		return ResponseEntity.ok(new DetalhamentoListaMedico(medico));
 		
 	}
 
